@@ -38,7 +38,7 @@ func PrintTree(root *Node, level int) {
 		indent := strings.Repeat(" ", level*4)
 		fmt.Print(indent, root.Data)
 		fmt.Println()
-		
+
 		PrintTree(root.Left, level+1)
 		PrintTree(root.Right, level+1)
 	}
@@ -58,27 +58,27 @@ func SumDataInNodes(root *Node) int {
 	if root == nil {
 		return 0
 	} else {
-		return root.Data + CalculateNodes(root.Left) + CalculateNodes(root.Right)
+		return root.Data + SumDataInNodes(root.Left) + SumDataInNodes(root.Right)
 	}
 }
 
 func main() {
-	var count int = 15
+	var count int = 4
 	var tree *Node = nil
 	rand.Seed(time.Now().Unix())
-	
+
 	// Заполняем дерево случайными числами
 	for i := 0; i < count; i++ {
 		number := rand.Intn(100)
 		if rand.Float32() > 0.5 {
 			number = -number
 		}
-		
+
 		InsertNode(&tree, number)
 	}
 	fmt.Println("Созданное дерево:")
 	PrintTree(tree, 0)
-	
+
 	wg := sync.WaitGroup{}
 	// Вычисляем количество узлов
 	countLeft := 0
@@ -93,7 +93,7 @@ func main() {
 		defer wg.Done()
 		countRight = CalculateNodes(tree.Right)
 	}()
-	
+
 	// Вычисляем сумму чисел
 	wg.Add(1)
 	sumLeft := 0
@@ -101,18 +101,18 @@ func main() {
 		defer wg.Done()
 		sumLeft = SumDataInNodes(tree.Left)
 	}()
-	
+
 	wg.Add(1)
 	sumRight := 0
 	go func() {
 		defer wg.Done()
 		sumRight = SumDataInNodes(tree.Right)
 	}()
-	
+
 	wg.Wait()
-	sum := sumLeft + sumRight
-	count = countLeft + countRight
-	
+	sum := sumLeft + sumRight + tree.Data
+	count = countLeft + countRight - 1
+
 	fmt.Printf("Сумма элементов: %d. Количество элементов: %d. Среднее: %f", sum, count, float64(sum)/float64(count))
 }
 

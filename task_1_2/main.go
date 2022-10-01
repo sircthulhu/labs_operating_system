@@ -10,7 +10,7 @@ import (
 func printMatrix(m *[][]int) {
 	rows := len(*m)
 	cols := len((*m)[0])
-	
+
 	for i := 0; i < rows; i++ {
 		for j := 0; j < cols; j++ {
 			fmt.Print((*m)[i][j])
@@ -23,7 +23,7 @@ func printMatrix(m *[][]int) {
 // createRandomMatrix создает матрицу случайных чисел размером n строк, m столбцов
 func createRandomMatrix(n, m int) *[][]int {
 	matrix := make([][]int, n)
-	
+
 	// Заполняем параллельно матрицу случайным образом числами [0;100)
 	wg := sync.WaitGroup{}
 	for i := 0; i < n; i++ {
@@ -31,7 +31,7 @@ func createRandomMatrix(n, m int) *[][]int {
 		col := i
 		go func(col *[]int) {
 			defer wg.Done()
-			
+
 			*col = make([]int, m)
 			for j := 0; j < m; j++ {
 				(*col)[j] = rand.Intn(100)
@@ -39,7 +39,7 @@ func createRandomMatrix(n, m int) *[][]int {
 		}(&matrix[col])
 	}
 	wg.Wait()
-	
+
 	return &matrix
 }
 
@@ -47,13 +47,13 @@ func createRandomMatrix(n, m int) *[][]int {
 func calculateSort(arr *[]int) {
 	// maxNumberInArray это максимальное число в массиве arr
 	var maxNumberInArray int = 99
-	
+
 	c := make([]int, maxNumberInArray+1) // Числа в исходном массиве [0;99]
 	length := len(*arr)
 	for i := 0; i < length; i++ {
 		c[(*arr)[i]]++
 	}
-	
+
 	idx := 0
 	for i := 0; i < maxNumberInArray+1; i++ {
 		for j := 0; j < c[i]; j++ {
@@ -64,15 +64,15 @@ func calculateSort(arr *[]int) {
 }
 
 func main() {
-	n := 10
-	m := 15
-	
+	n := 3
+	m := 3
+
 	// matrix это двумерный массив целых чисел
 	matrix := createRandomMatrix(n, m)
-	
+
 	fmt.Println("Созданная матрица:")
 	printMatrix(matrix)
-	
+
 	fmt.Println("Сортируем матрицу по строкам...")
 	wg := sync.WaitGroup{}
 	for i := 0; i < n; i++ {
@@ -82,7 +82,7 @@ func main() {
 			calculateSort(&((*matrix)[row]))
 		}(i)
 	}
-	
+
 	fmt.Println("Отсортированная по строкам матрица:")
 	printMatrix(matrix)
 }

@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math/rand"
+	"os"
+	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -10,7 +14,7 @@ import (
 func printMatrix(m *[][]int) {
 	rows := len(*m)
 	cols := len((*m)[0])
-	
+
 	for i := 0; i < rows; i++ {
 		for j := 0; j < cols; j++ {
 			fmt.Print((*m)[i][j])
@@ -23,7 +27,7 @@ func printMatrix(m *[][]int) {
 // createRandomMatrix создает матрицу случайных чисел размером n строк, m столбцов
 func createRandomMatrix(n, m int) *[][]int {
 	matrix := make([][]int, n)
-	
+
 	// Заполняем параллельно матрицу случайным образом числами [0;100)
 	wg := sync.WaitGroup{}
 	for i := 0; i < n; i++ {
@@ -31,7 +35,7 @@ func createRandomMatrix(n, m int) *[][]int {
 		col := i
 		go func(col *[]int) {
 			defer wg.Done()
-			
+
 			*col = make([]int, m)
 			for j := 0; j < m; j++ {
 				(*col)[j] = rand.Intn(100)
@@ -39,14 +43,14 @@ func createRandomMatrix(n, m int) *[][]int {
 		}(&matrix[col])
 	}
 	wg.Wait()
-	
+
 	return &matrix
 }
 
 func calculateMinElements(matrix *[][]int) *[]int {
 	rows := len(*matrix)
 	cols := len((*matrix)[0])
-	
+
 	mins := make([]int, cols)
 	wg := sync.WaitGroup{}
 	for i := 0; i < cols; i++ {
@@ -54,7 +58,7 @@ func calculateMinElements(matrix *[][]int) *[]int {
 		col := i
 		go func(col int, result *int) {
 			defer wg.Done()
-			
+
 			*result = (*matrix)[0][col]
 			for j := 0; j < rows; j++ {
 				if (*matrix)[j][col] < *result {
@@ -64,25 +68,34 @@ func calculateMinElements(matrix *[][]int) *[]int {
 		}(col, &mins[i])
 	}
 	wg.Wait()
-	
+
 	return &mins
 }
 
 func main() {
 	n := 10
 	m := 15
-	
+
+	fmt.Print("\nВведите количество строк: ")
+	r := bufio.NewReader(os.Stdin)
+	nString, _ := r.ReadString('\n')
+	n, _ = strconv.Atoi(strings.Trim(nString, "\n"))
+
+	fmt.Print("\nВведите количество столбцов: ")
+	mString, _ := r.ReadString('\n')
+	m, _ = strconv.Atoi(strings.Trim(mString, "\n"))
+
 	// matrix это двумерный массив целых чисел
 	matrix := createRandomMatrix(n, m)
-	
+
 	fmt.Println("Созданная матрица:")
 	printMatrix(matrix)
-	
+
 	// Считаем минимальные значения столбцов
 	fmt.Println("Вычисляем минимумы по столбцам...")
 	mins := calculateMinElements(matrix)
 	fmt.Printf("Минимальные элементы по столбцам: %v\n", *mins)
-	
+
 	min := (*mins)[0]
 	minIdx := 0
 	for i := 1; i < m; i++ {
@@ -92,5 +105,5 @@ func main() {
 		}
 	}
 	fmt.Printf("Минимальный элемент - %d. Столбец этого элемента - %d\n", min, minIdx)
-	
+
 }

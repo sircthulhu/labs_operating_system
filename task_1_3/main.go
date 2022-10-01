@@ -14,7 +14,7 @@ import (
 func printMatrix(m *[][]int) {
 	rows := len(*m)
 	cols := len((*m)[0])
-	
+
 	for i := 0; i < rows; i++ {
 		for j := 0; j < cols; j++ {
 			fmt.Print((*m)[i][j])
@@ -27,7 +27,7 @@ func printMatrix(m *[][]int) {
 // createRandomMatrix создает матрицу случайных чисел размером n строк, m столбцов
 func createRandomMatrix(n, m int) *[][]int {
 	matrix := make([][]int, n)
-	
+
 	// Заполняем параллельно матрицу случайным образом числами [0;100)
 	wg := sync.WaitGroup{}
 	for i := 0; i < n; i++ {
@@ -35,7 +35,7 @@ func createRandomMatrix(n, m int) *[][]int {
 		col := i
 		go func(col *[]int) {
 			defer wg.Done()
-			
+
 			*col = make([]int, m)
 			for j := 0; j < m; j++ {
 				(*col)[j] = rand.Intn(99) + 1 // Числа должны быть натуральными
@@ -43,7 +43,7 @@ func createRandomMatrix(n, m int) *[][]int {
 		}(&matrix[col])
 	}
 	wg.Wait()
-	
+
 	return &matrix
 }
 
@@ -56,16 +56,16 @@ func multiplyRow(row int, matrix *[][]int, multiplier int) {
 }
 
 func main() {
-	n := 6
-	m := 8
+	n := 3
+	m := 3
 	var multiplier int
-	
+
 	// matrix это двумерный массив целых чисел
 	matrix := createRandomMatrix(n, m)
-	
+
 	fmt.Println("Созданная матрица:")
 	printMatrix(matrix)
-	
+
 	fmt.Print("\nВведите множитель: ")
 	r := bufio.NewReader(os.Stdin)
 	multiplierString, err := r.ReadString('\n')
@@ -78,9 +78,9 @@ func main() {
 		fmt.Printf("Неверный формат числа множителя. Ошибка: %#v\n", err)
 		os.Exit(1)
 	}
-	
+
 	fmt.Println("\nУмножаем матрицу на множитель...")
-	
+
 	wg := sync.WaitGroup{}
 	for i := 0; i < n; i++ {
 		wg.Add(1)

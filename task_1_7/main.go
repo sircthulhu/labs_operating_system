@@ -16,7 +16,7 @@ func SwapBytes(blocks *[]byte, startIdx, endIdx int) {
 		temp = (*blocks)[i]
 		(*blocks)[i] = (*blocks)[j]
 		(*blocks)[j] = temp
-		
+
 		i++
 		j--
 	}
@@ -30,33 +30,33 @@ func DecryptBlock(blocks *[]byte, key *[]byte, number int) {
 	if blockStartIdx > blocksLen {
 		return
 	}
-	
-	lastIdx := blockStartIdx + keyLen
-	if lastIdx > blocksLen {
+
+	lastIdx := blockStartIdx + keyLen - 1
+	if lastIdx >= blocksLen {
 		lastIdx = blocksLen - 1
 	}
-	
-	// Шифруем с помощью ключа
+
 	j := 0 // j для обхода ключа
 	for i := blockStartIdx; i < lastIdx; i++ {
 		(*blocks)[i] = (*blocks)[i] ^ (*key)[j]
 		j++
 	}
-	
+
 	// Обмениваем байты в блоке
 	SwapBytes(blocks, blockStartIdx, lastIdx)
 }
 
 func main() {
-	key := "Ключ шифрования"
-	encrypted := []byte{0xf0, 0x2a, 0x0, 0x1, 0x1, 0x30, 0x1, 0x7, 0xf1, 0x53, 0x59, 0x51, 0x69, 0xf1, 0xb, 0x0, 0x30, 0x0, 0xc, 0x0, 0xc, 0x0, 0x32, 0x1, 0x3c, 0x1, 0xd, 0x1, 0x2d, 0xd0, 0xd0, 0xb4, 0xd0, 0xbb, 0xd1, 0x8f, 0x20, 0xd1, 0x88, 0xd0, 0xb8, 0xd1, 0x84, 0xd1, 0x80, 0xd0, 0xbe, 0xd0, 0xb2, 0xd0, 0xba, 0xd0, 0xb8}
+	key := "111"
+	encrypted := []byte{0xe0, 0x8e, 0xd0, 0x89, 0xe1, 0x80, 0xe1, 0x83, 0xd0, 0xb3, 0xe0, 0xb5}
+
 	keyBytes := []byte(key)
-	
+
 	fmt.Println("Начинаю дешифровку...")
 	blocksLen := len(encrypted)
 	keyLen := len(key)
 	blocksCount := blocksLen / keyLen
-	
+
 	wg := sync.WaitGroup{}
 	for i := 0; i < blocksCount; i++ {
 		wg.Add(1)
@@ -66,7 +66,7 @@ func main() {
 		}(i)
 	}
 	wg.Wait()
-	
+
 	fmt.Printf("Зашифрованная строка: %#v\n", string(encrypted))
 }
 
